@@ -9,6 +9,14 @@ Newblog module is a reimplementation of Drupal's core blog module with some addi
 * FeedAPI support to import nodes as blog posts.
 * Block to display create content links.
 
+Dependencies
+------------
+
+* [Features](http://drupal.org/project/features)
+* [Views](http://drupal.org/project/views)
+* [Semantic Views](http://drupal.org/project/semanticviews)
+* [Token](http://drupal.org/project/token)
+
 Roadmap
 -------
 
