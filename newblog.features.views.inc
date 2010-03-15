@@ -954,6 +954,22 @@ function _newblog_views_default_views() {
       'field' => 'nid',
       'relationship' => 'none',
     ),
+    'uid' => array(
+      'operator' => 'not in',
+      'value' => array(
+        '0' => 0,
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'uid',
+      'table' => 'users',
+      'field' => 'uid',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
