@@ -130,7 +130,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         while ($tid = db_result($result)) {
           $term = taxonomy_get_term($tid);
           $vocabulary = taxonomy_vocabulary_load($term->vid);
-          $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $term->tid);
+          $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $tid);
         }
         if (!empty($items)) {
           $user = user_load($uid);
