@@ -84,7 +84,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         $item = menu_get_item();
         switch ($item['path']) {
           case 'blog':
-            if ($item['page_arguments'][2]) {
+            if (!empty($item['page_arguments'][2])) {
               $uid = $item['page_arguments'][2];
             }
             else {
