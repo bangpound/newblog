@@ -85,9 +85,6 @@ function _newblog_views_default_views() {
       'id' => 'description',
       'table' => 'term_data',
       'field' => 'description',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
   ));
@@ -235,9 +232,6 @@ function _newblog_views_default_views() {
       'id' => 'tid',
       'table' => 'term_node',
       'field' => 'tid',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
     'title' => array(
@@ -247,9 +241,6 @@ function _newblog_views_default_views() {
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
     'name' => array(
@@ -259,9 +250,6 @@ function _newblog_views_default_views() {
       'id' => 'name',
       'table' => 'users',
       'field' => 'name',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
     'created' => array(
@@ -272,9 +260,6 @@ function _newblog_views_default_views() {
       'id' => 'created',
       'table' => 'node',
       'field' => 'created',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
   ));
@@ -318,69 +303,16 @@ function _newblog_views_default_views() {
       'default_argument_user' => 0,
       'default_argument_fixed' => '',
       'default_argument_php' => '',
-      'validate_argument_node_type' => array(
-        'blog' => 0,
-        'event' => 0,
-        'feed' => 0,
-        'image' => 0,
-        'page' => 0,
-        'release' => 0,
-        'report' => 0,
-        'review' => 0,
-        'story' => 0,
-        'video' => 0,
-      ),
+      'validate_argument_node_type' => array(),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
-      'validate_argument_vocabulary' => array(
-        '4' => 4,
-        '5' => 0,
-        '1' => 0,
-        '2' => 0,
-        '3' => 0,
-        '6' => 0,
-        '7' => 0,
-        '8' => 0,
-        '9' => 0,
-        '10' => 0,
-        '11' => 0,
-        '12' => 0,
-        '13' => 0,
-        '14' => 0,
-        '15' => 0,
-        '16' => 0,
-        '17' => 0,
-        '18' => 0,
-        '19' => 0,
-        '20' => 0,
-        '21' => 0,
-        '22' => 0,
-        '23' => 0,
-        '24' => 0,
-        '25' => 0,
-        '26' => 0,
-        '27' => 0,
-        '28' => 0,
-        '29' => 0,
-        '30' => 0,
-        '31' => 0,
-        '32' => 0,
-        '33' => 0,
-        '34' => 0,
-        '35' => 0,
-        '36' => 0,
-        '37' => 0,
-        '38' => 0,
-        '39' => 0,
-        '40' => 0,
-        '41' => 0,
-        '42' => 0,
-        '43' => 0,
-        '44' => 0,
-        '45' => 0,
-      ),
+      'validate_argument_vocabulary' => array(),
       'validate_argument_type' => 'tid',
       'validate_argument_php' => '',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(),
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
     ),
     'term_node_tid_depth_modifier' => array(
       'default_action' => 'ignore',
@@ -400,37 +332,18 @@ function _newblog_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
-      'relationship' => 'none',
-    ),
-    'created' => array(
-      'operator' => '>=',
-      'value' => array(
-        'type' => 'offset',
-        'value' => '-8 day',
-        'min' => '',
-        'max' => '',
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
+      'field' => 'status',
       'relationship' => 'none',
     ),
   ));
@@ -469,22 +382,6 @@ function _newblog_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('filters', array(
-    'status_extra' => array(
-      'operator' => '=',
-      'value' => '',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'status_extra',
-      'table' => 'node',
-      'field' => 'status_extra',
-      'relationship' => 'none',
-    ),
-  ));
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'blog/group/%');
   $handler->override_option('menu', array(
@@ -555,9 +452,6 @@ function _newblog_views_default_views() {
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
   ));
@@ -795,24 +689,21 @@ function _newblog_views_default_views() {
       'validate_argument_user_flag_test' => 'flaggable',
       'validate_argument_user_flag_id_type' => 'id',
       'validate_argument_php' => '',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
   ));
   $handler->override_option('filters', array(
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'relationship' => 'none',
     ),
     'uid' => array(
@@ -990,9 +881,6 @@ function _newblog_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
     'name' => array(
       'label' => '',
@@ -1025,9 +913,6 @@ function _newblog_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
   ));
   $handler->override_option('sorts', array(
@@ -1053,31 +938,6 @@ function _newblog_views_default_views() {
       'id' => 'status',
       'table' => 'node',
       'field' => 'status',
-      'override' => array(
-        'button' => 'Override',
-      ),
-      'relationship' => 'nid',
-    ),
-    'created' => array(
-      'operator' => '>=',
-      'value' => array(
-        'type' => 'offset',
-        'value' => '-7 day',
-        'min' => '',
-        'max' => '',
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'nid',
     ),
     'nid' => array(
@@ -1092,6 +952,22 @@ function _newblog_views_default_views() {
       'id' => 'nid',
       'table' => 'newblog',
       'field' => 'nid',
+      'relationship' => 'none',
+    ),
+    'uid' => array(
+      'operator' => 'not in',
+      'value' => array(
+        '0' => 0,
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'uid',
+      'table' => 'users',
+      'field' => 'uid',
       'relationship' => 'none',
     ),
   ));
