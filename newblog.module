@@ -117,11 +117,12 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         while ($tid = db_result($result)) {
           $terms[$tid] = taxonomy_get_term($tid);
         }
+        $items = array();
         foreach ($terms as $term) {
           $vocabulary = taxonomy_vocabulary_load($term->vid);
           $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $term->tid);
         }
-        if (is_array($items)) {
+        if (!empty($items)) {
           $user = user_load($uid);
           $name = isset($user->profile_blogtitle) ? $user->profile_blogtitle : $user->name;
           $block['subject'] = t('@name', array('@name' => $name));
