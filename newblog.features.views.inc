@@ -332,37 +332,18 @@ function _newblog_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
-      'relationship' => 'none',
-    ),
-    'created' => array(
-      'operator' => '>=',
-      'value' => array(
-        'type' => 'offset',
-        'value' => '-8 day',
-        'min' => '',
-        'max' => '',
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
+      'field' => 'status',
       'relationship' => 'none',
     ),
   ));
@@ -401,22 +382,6 @@ function _newblog_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('filters', array(
-    'status_extra' => array(
-      'operator' => '=',
-      'value' => '',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'status_extra',
-      'table' => 'node',
-      'field' => 'status_extra',
-      'relationship' => 'none',
-    ),
-  ));
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'blog/group/%');
   $handler->override_option('menu', array(
@@ -727,18 +692,18 @@ function _newblog_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'relationship' => 'none',
     ),
     'uid' => array(
