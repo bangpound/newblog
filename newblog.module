@@ -59,16 +59,14 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         'info' => t('Blogger tags'),
         'cache' => BLOCK_CACHE_PER_PAGE,
         'visibility' => 1,
-        'pages' => "blog*\nnode*",
+        'pages' => "blog/*\nnode/*",
       );
       return $blocks;
 
     case 'view':
       if ($delta == 0) {
-        $all_types = node_get_types('types');
         $list = array();
-
-        foreach ($all_types as $key => $value) {
+        foreach (node_get_types('types') as $key => $value) {
           if (variable_get('newblog_'. $key, FALSE) && node_access('create', $key)) {
             $list[] = theme('newblog_create_post_link', $key, $value->name);
           }
@@ -83,7 +81,11 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
       if ($delta == 1) {
         $item = menu_get_item();
         switch ($item['path']) {
+
+          // Newblog view
           case 'blog':
+
+            // Only when there is a UID argument.
             if (!empty($item['page_arguments'][2])) {
               $uid = $item['page_arguments'][2];
             }
@@ -92,8 +94,13 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
             }
             break;
 
+          // Core node view.
           case 'node/%':
+
+            // The first page argument is the node itself.
             if ($item['page_arguments'][0]->blog) {
+
+              // The UID is the author of the node.
               $uid = $item['page_arguments'][0]->uid;
             }
             else {
@@ -104,21 +111,26 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
           default:
             return NULL;
         }
+
+        // Query arguments begin with the UID.
         $args = array($uid);
-        $vocabularies = array_values(array_filter(variable_get('newblog_user_nav_vocabs', array())));
+        $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) WHERE n.uid = %d AND n.status = 1');
+
+        // Array of vocabulary IDs which are configured to appear in the blogger
+        // tags block.
+        $vocabularies = array_values(variable_get('newblog_user_nav_vocabs', array()));
         if (count($vocabularies)) {
           $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) INNER JOIN {term_data} td ON (tn.tid = td.tid) WHERE n.uid = %d AND n.status = 1 AND td.vid IN ('. db_placeholders($vocabularies) .')');
           $args = array_merge($args, $vocabularies);
         }
-        else {
-          $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) WHERE n.uid = %d AND n.status = 1');
-        }
+
         $result = db_query($query, $args);
+
         $items = array();
         while ($tid = db_result($result)) {
           $term = taxonomy_get_term($tid);
           $vocabulary = taxonomy_vocabulary_load($term->vid);
-          $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $term->tid);
+          $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $tid);
         }
         if (!empty($items)) {
           $user = user_load($uid);
@@ -154,7 +166,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
 
     case 'save':
       if ($delta == 1) {
-        variable_set('newblog_user_nav_vocabs', $edit['user_newblog_vocabularies']);
+        variable_set('newblog_user_nav_vocabs', array_filter($edit['user_newblog_vocabularies']));
       }
 
   }
