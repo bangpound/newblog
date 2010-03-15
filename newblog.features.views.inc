@@ -103,7 +103,7 @@ function _newblog_views_default_views() {
   $handler->override_option('filters', array(
     'vid' => array(
       'operator' => 'in',
-      'value' => array(variable_get('newblog_vocabulary', 0)),
+      'value' => array(),
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
