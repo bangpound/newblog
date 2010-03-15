@@ -65,10 +65,8 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
 
     case 'view':
       if ($delta == 0) {
-        $all_types = node_get_types('types');
         $list = array();
-
-        foreach ($all_types as $key => $value) {
+        foreach (node_get_types('types') as $key => $value) {
           if (variable_get('newblog_'. $key, FALSE) && node_access('create', $key)) {
             $list[] = theme('newblog_create_post_link', $key, $value->name);
           }
