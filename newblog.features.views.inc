@@ -940,25 +940,6 @@ function _newblog_views_default_views() {
       'field' => 'status',
       'relationship' => 'nid',
     ),
-    'created' => array(
-      'operator' => '>=',
-      'value' => array(
-        'type' => 'offset',
-        'value' => '-7 day',
-        'min' => '',
-        'max' => '',
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
-      'relationship' => 'nid',
-    ),
     'nid' => array(
       'operator' => '=',
       'value' => '1',
