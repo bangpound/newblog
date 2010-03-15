@@ -13,7 +13,6 @@ class views_handler_filter_newblog_nid extends views_handler_filter_boolean_oper
   function query() {
     // Figure out what base table this relationship brings to the party.
     $table_data = views_fetch_data($this->definition['base']);
-    $base_field = empty($this->definition['base field']) ? $table_data['table']['base']['field'] : $this->definition['base field'];
 
     $this->ensure_my_table();
 
