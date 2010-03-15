@@ -126,6 +126,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
           $user = user_load($uid);
           $name = isset($user->profile_blogtitle) ? $user->profile_blogtitle : $user->name;
           $block['subject'] = t('@name', array('@name' => $name));
+          $block['content'] = '';
           foreach ($items as $name => $group) {
             $block['content'] .= theme('item_list', $group, $name);
           }
