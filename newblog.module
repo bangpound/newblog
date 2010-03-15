@@ -189,12 +189,14 @@ function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 
     case 'insert':
     case 'update':
-      $already_blog = db_result(db_query('SELECT nid FROM {newblog} WHERE nid = %d', $node->nid));
-      if ($already_blog && !$node->blog) {
-        db_query('DELETE FROM {newblog} WHERE nid = %d', $node->nid);
-      }
-      elseif (!$already_blog && $node->blog) {
-        drupal_write_record('newblog', $node);
+      if (isset($node->blog)) {
+        $already_blog = db_result(db_query('SELECT nid FROM {newblog} WHERE nid = %d', $node->nid));
+        if ($already_blog && !$node->blog) {
+          db_query('DELETE FROM {newblog} WHERE nid = %d', $node->nid);
+        }
+        elseif (!$already_blog && $node->blog) {
+          drupal_write_record('newblog', $node);
+        }
       }
       break;
 
