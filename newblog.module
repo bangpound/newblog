@@ -59,7 +59,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         'info' => t('Blogger tags'),
         'cache' => BLOCK_CACHE_PER_PAGE,
         'visibility' => 1,
-        'pages' => "blog*\nnode*",
+        'pages' => "blog/*\nnode/*",
       );
       return $blocks;
 
