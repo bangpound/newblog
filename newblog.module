@@ -207,6 +207,7 @@ function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       break;
 
     case 'alter':
+      $group_blog = FALSE;
       if ($node->blog && !$a3 && $a4) {
         if ($node->taxonomy) {
           foreach ($node->taxonomy as $term) {
