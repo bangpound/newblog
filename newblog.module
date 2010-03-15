@@ -261,29 +261,6 @@ function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
 }
 
-/**
- * Implementation of hook_form_alter().
- */
-function newblog_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] .'_node_form' == $form_id && variable_get('newblog_'. $form['type']['#value'], FALSE)) {
-    $node = $form['#node'];
-    if (isset($_GET['blog']) && !isset($node->nid)) {
-      $blog = TRUE;
-    }
-    else {
-      $blog = $node->blog;
-    }
-    if (user_access('maintain own blog')) {
-      $form['blog'] = array(
-        '#type' => 'checkbox',
-        '#title' => 'Blog this',
-        '#description' => 'Add this to the user blog',
-        '#default_value' => $blog,
-      );
-    }
-  }
-}
-
 function newblog_form_node_type_form_alter(&$form, &$form_state) {
   if (isset($form['identity']['type'])) {
     $form['workflow']['newblog'] = array(
