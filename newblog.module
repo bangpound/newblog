@@ -81,7 +81,11 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
       if ($delta == 1) {
         $item = menu_get_item();
         switch ($item['path']) {
+
+          // Newblog view
           case 'blog':
+
+            // Only when there is a UID argument.
             if (!empty($item['page_arguments'][2])) {
               $uid = $item['page_arguments'][2];
             }
@@ -90,8 +94,13 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
             }
             break;
 
+          // Core node view.
           case 'node/%':
+
+            // The first page argument is the node itself.
             if ($item['page_arguments'][0]->blog) {
+
+              // The UID is the author of the node.
               $uid = $item['page_arguments'][0]->uid;
             }
             else {
@@ -102,7 +111,12 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
           default:
             return NULL;
         }
+
+        // Query arguments begin with the UID.
         $args = array($uid);
+
+        // Array of vocabulary IDs which are configured to appear in the blogger
+        // tags block.
         $vocabularies = array_values(variable_get('newblog_user_nav_vocabs', array()));
         if (count($vocabularies)) {
           $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) INNER JOIN {term_data} td ON (tn.tid = td.tid) WHERE n.uid = %d AND n.status = 1 AND td.vid IN ('. db_placeholders($vocabularies) .')');
@@ -112,6 +126,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
           $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) WHERE n.uid = %d AND n.status = 1');
         }
         $result = db_query($query, $args);
+
         $items = array();
         while ($tid = db_result($result)) {
           $term = taxonomy_get_term($tid);
