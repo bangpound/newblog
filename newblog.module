@@ -103,7 +103,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
             return NULL;
         }
         $args = array($uid);
-        $vocabularies = array_values(array_filter(variable_get('newblog_user_nav_vocabs', array())));
+        $vocabularies = array_values(variable_get('newblog_user_nav_vocabs', array()));
         if (count($vocabularies)) {
           $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) INNER JOIN {term_data} td ON (tn.tid = td.tid) WHERE n.uid = %d AND n.status = 1 AND td.vid IN ('. db_placeholders($vocabularies) .')');
           $args = array_merge($args, $vocabularies);
@@ -152,7 +152,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
 
     case 'save':
       if ($delta == 1) {
-        variable_set('newblog_user_nav_vocabs', $edit['user_newblog_vocabularies']);
+        variable_set('newblog_user_nav_vocabs', array_filter($edit['user_newblog_vocabularies']));
       }
 
   }
