@@ -1,0 +1,408 @@
+<?php
+// $Id: newblog.module,v 1.1.2.3 2009/06/12 09:04:05 bangpound Exp $
+
+include_once('newblog.features.inc');
+
+/**
+ * @file
+ * Enables keeping an easily and regularly updated web page or a blog.
+ */
+
+/**
+ * Implementation of hook_term_path().
+ */
+function newblog_term_path($term) {
+  return 'blog/group/'. $term->tid;
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function newblog_user($type, &$edit, &$user) {
+  if ($type == 'view' && user_access('maintain own blog', $user)) {
+    $user->content['summary']['blog'] =  array(
+      '#type' => 'user_profile_item',
+      '#title' => t('Blog'),
+      '#value' => l(t('View recent blog entries'), "blog/$user->uid", array('attributes' => array('title' => t("Read @username's latest blog entries.", array('@username' => $user->name))))),
+      '#attributes' => array('class' => 'blog'),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_theme()
+ */
+function newblog_theme($existing, $type, $theme, $path) {
+  return array(
+    'newblog_create_post_link' => array(
+      'arguments' => array(
+        'type' => NULL,
+        'name' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_block()
+ */
+function newblog_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks[0] = array(
+        'info' => t('Post blog entry'),
+        'cache' => BLOCK_CACHE_PER_ROLE,
+        'visibility' => 1,
+        'pages' => 'blog*',
+      );
+      $blocks[1] = array(
+        'info' => t('Blogger tags'),
+        'cache' => BLOCK_CACHE_PER_PAGE,
+        'visibility' => 1,
+        'pages' => "blog*\nnode*",
+      );
+      return $blocks;
+
+    case 'view':
+      if ($delta == 0) {
+        $all_types = node_get_types('types');
+        $list = array();
+
+        foreach ($all_types as $key => $value) {
+          if (variable_get('newblog_'. $key, FALSE) && node_access('create', $key)) {
+            $list[] = theme('newblog_create_post_link', $key, $value->name);
+          }
+        }
+        if (!empty($list)) {
+          $block = array(
+            'subject' => t('Post blog entry'),
+            'content' => theme('item_list', $list),
+          );
+        }
+      }
+      if ($delta == 1) {
+        $item = menu_get_item();
+        switch ($item['path']) {
+          case 'blog':
+            if ($item['page_arguments'][2]) {
+              $uid = $item['page_arguments'][2];
+            }
+            else {
+              return NULL;
+            }
+            break;
+
+          case 'node/%':
+            if ($item['page_arguments'][0]->blog) {
+              $uid = $item['page_arguments'][0]->uid;
+            }
+            else {
+              return NULL;
+            }
+            break;
+
+          default:
+            return NULL;
+        }
+        $vocabularies = array_values(array_filter(variable_get('newblog_user_nav_vocabs', array())));
+        if (count($vocabularies)) {
+          $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) INNER JOIN {term_data} td ON (tn.tid = td.tid) WHERE n.uid = %d AND n.status = 1 AND td.vid IN ('. db_placeholders($vocabularies) .')');
+          $result = db_query($query, $uid, $vocabularies);
+        }
+        else {
+          $query = db_rewrite_sql('SELECT DISTINCT tn.tid FROM {term_node} tn INNER JOIN {node} n ON (tn.vid = n.vid) INNER JOIN {newblog} nb ON (n.nid = nb.nid) WHERE n.uid = %d AND n.status = 1');
+          $result = db_query($query, $uid);
+        }
+        $terms = array();
+        while ($tid = db_result($result)) {
+          $terms[$tid] = taxonomy_get_term($tid);
+        }
+        foreach ($terms as $term) {
+          $vocabulary = taxonomy_vocabulary_load($term->vid);
+          $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $term->tid);
+        }
+        if (is_array($items)) {
+          $user = user_load($uid);
+          $name = $user->profile_blogtitle ? $user->profile_blogtitle : $user->name;
+          $block['subject'] = t('@name', array('@name' => $name));
+          foreach ($items as $name => $group) {
+            $block['content'] .= theme('item_list', $group, $name);
+          }
+        }
+        else {
+          return;
+        }
+      }
+      return $block;
+
+    case 'configure':
+      if ($delta == 1) {
+        $vocabularies = taxonomy_get_vocabularies();
+        foreach ($vocabularies as $vocabulary) {
+          $options[$vocabulary->vid] = $vocabulary->name;
+        }
+        $form['user_newblog_vocabularies'] = array(
+          '#type' => 'checkboxes',
+          '#title' => t('Vocabularies to display'),
+          '#description' => t('Choose the vocabularies which are displayed for a user blog navigation block.'),
+          '#options' => $options,
+          '#default_value' => variable_get('newblog_user_nav_vocabs', array()),
+        );
+        return $form;
+      }
+      break;
+
+    case 'save':
+      if ($delta == 1) {
+        variable_set('newblog_user_nav_vocabs', $edit['user_newblog_vocabularies']);
+      }
+
+  }
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function newblog_perm() {
+  return array('maintain own blog');
+}
+
+/**
+ * Implementation of hook_nodeapi
+ */
+function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'prepare':
+      if (isset($node->feedapi_node) && is_array($node->feedapi_node->feed_nids)) {
+        foreach ($node->feedapi_node->feed_nids as $feed_nid) {
+          $feed_node = node_load($feed_nid);
+          if (feedapi_enabled_type($feed_node->type, 'newblog') && $feed_node->feed->settings['processors']['newblog'] && $feed_node->feed->settings['processors']['newblog']['status']) {
+            $node->blog = TRUE;
+          }
+        }
+      }
+      break;
+    case 'load':
+      $result = db_result(db_query('SELECT nid FROM {newblog} WHERE nid = %d', $node->nid));
+      return array('blog' => ($result ? TRUE : FALSE));
+      break;
+
+    case 'insert':
+    case 'update':
+      $already_blog = db_result(db_query('SELECT nid FROM {newblog} WHERE nid = %d', $node->nid));
+      if ($already_blog && !$node->blog) {
+        db_query('DELETE FROM {newblog} WHERE nid = %d', $node->nid);
+      }
+      elseif (!$already_blog && $node->blog) {
+        drupal_write_record('newblog', $node);
+      }
+      break;
+
+    case 'delete':
+      if (db_result(db_query('SELECT nid FROM {newblog} WHERE nid = %d', $node->nid))) {
+        db_query('DELETE FROM {newblog} WHERE nid = %d', $node->nid);
+      }
+      break;
+
+    case 'alter':
+      if ($node->blog && !$a3 && $a4) {
+        if ($node->taxonomy) {
+          foreach ($node->taxonomy as $term) {
+            if ($term->vid == variable_get('newblog_vocabulary', 0)) {
+              $group_blog = $term;
+              break;
+            }
+          }
+        }
+
+        if ($group_blog) {
+          $titles = array('Blogs', $group_blog->name);
+          $paths = array('blog', taxonomy_term_path($group_blog));
+        }
+        else {
+          $titles = array('Blogs', '[author-name]\'s blog');
+          $paths = array('blog', 'blog/[author-uid]');
+        }
+
+        $titles = module_exists('token') ? token_replace($titles, 'node', $node) : $titles;
+        $paths = module_exists('token') ? token_replace($paths, 'node', $node) : $paths;
+
+        $trail = array(l(t('Home'), '<front>'));
+        for ($i = 0; $i < count($titles); $i++) {
+          // Skip empty titles
+          $title = trim($titles[$i]);
+          // Output plaintext instead of a link if there is a title without a path.
+          $path = trim($paths[$i]);
+          if (strlen($path) > 0 && $path != '<none>') {
+            $trail[] = l($title, trim($paths[$i]));
+          }
+          else {
+            $trail[] = check_plain($title);
+          }
+        }
+        drupal_set_breadcrumb($trail);
+      }
+      break;
+
+    case 'view':
+      if ($a4 && menu_get_object() === $node && module_exists('context_ui')) {
+        context_set_by_condition('newblog_user', $node->blog);
+        foreach ($node->taxonomy as $term) {
+          if ($term->vid == variable_get('newblog_vocabulary', 0)) {
+            context_set_by_condition('newblog_group', '*');
+            context_set_by_condition('newblog_group', $term->tid);
+          }
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function newblog_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] .'_node_form' == $form_id && variable_get('newblog_'. $form['type']['#value'], FALSE)) {
+    $node = $form['#node'];
+    if (isset($_GET['blog']) && !isset($node->nid)) {
+      $blog = TRUE;
+    }
+    else {
+      $blog = $node->blog;
+    }
+    if (user_access('maintain own blog')) {
+      $form['blog'] = array(
+        '#type' => 'checkbox',
+        '#title' => 'Blog this',
+        '#description' => 'Add this to the user blog',
+        '#default_value' => $blog,
+      );
+    }
+  }
+}
+
+function newblog_form_node_type_form_alter(&$form, &$form_state) {
+  if (isset($form['identity']['type'])) {
+    $form['workflow']['newblog'] = array(
+      '#type' => 'checkbox',
+      '#weight' => 10,
+      '#title' => t('Allowed to be in user blogs?'),
+      '#default_value' => variable_get('newblog_'. $form['#node_type']->type, FALSE),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function newblog_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#newblog':
+      $output = '<p>'. t('The blog module allows registered users to maintain an online journal, or <em>blog</em>. Blogs are made up of individual <em>blog entries</em>, and the blog entries are most often displayed in descending order by creation time.') .'</p>';
+      $output .= '<p>'. t('There is an (optional) <em>Blogs</em> menu item added to the Navigation menu, which displays all blogs available on your site, and a <em>My blog</em> item displaying the current user\'s blog entries. The <em>Blog entry</em> menu item under <em>Create content</em> allows new blog entries to be created.') .'</p>';
+      $output .= '<p>'. t('Each blog entry is displayed with an automatic link to other blogs created by the same user. By default, blog entries have comments enabled and are automatically promoted to the site front page. The blog module also creates a <em>Recent blog posts</em> block that may be enabled at the <a href="@blocks">blocks administration page</a>.', array('@blocks' => url('admin/build/block'))) .'</p>';
+      return $output;
+    case 'feedapi/full_name':
+      return t('New Blog - make blog posts from feed items.');
+  }
+}
+
+/**
+ * Implementation of hook_link().
+ */
+function newblog_link($type, $node = NULL, $teaser = FALSE) {
+  $links = array();
+  if ($type == 'node' && $node->blog) {
+    if (arg(0) != 'blog' || arg(1) != $node->uid) {
+      $links['newblog_usernames_blog'] = array(
+        'title' => t("@username's blog", array('@username' => $node->name)),
+        'href' => "blog/$node->uid",
+        'attributes' => array('title' => t("Read @username's latest blog entries.", array('@username' => $node->name)))
+      );
+    }
+  }
+
+  return $links;
+}
+
+/**
+ * Implementation of hook_views_api().
+ */
+function newblog_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'newblog'),
+    //'path' => drupal_get_path('module', 'newblog') . '/includes',
+  );
+}
+
+function newblog_context_conditions() {
+  $items = array();
+
+  // Newblog user blog context
+  $items['newblog_user'] = array(
+    '#title' => t('User Blog'),
+    '#type' => 'radios',
+    '#options' => array(0 => t('False'), 1 => t('True')),
+    '#description' => t('The node is part of a user\'s blog'),
+  );
+
+  // Newblog group blog context
+  $tree = taxonomy_get_tree(variable_get('newblog_vocabulary', 0));
+  $options = array();
+  $exclude = array();
+
+  $options['*'] = t('Any');
+  if ($tree) {
+    foreach ($tree as $term) {
+      if (!in_array($term->tid, $exclude)) {
+        $options[$term->tid] = str_repeat('-', $term->depth) . $term->name;
+      }
+    }
+  }
+  $items['newblog_group'] = array(
+    '#title' => t('Group Blog'),
+    '#type' => 'checkboxes',
+    '#options' => $options,
+    '#description' => t('The node is part of a user\'s blog'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_feedapi_item().
+ * Do nothing here, this function only makes us a feedapi processor,
+ * which means that we can be enabled/disabled on a per node type
+ * basis.
+ */
+function newblog_feedapi_item($op) {
+}
+
+/**
+ * Implementation of hook_feedapi_settings_form().
+ * If a module provides parsers and processors it MUST evaluate the $type variable
+ * to return different forms for parsers and processors.
+ * There might be a better term for parsers and processors than $type.
+ */
+function newblog_feedapi_settings_form($type) {
+  $form = array();
+
+  switch ($type) {
+    case 'processors':
+      $form['status'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Feed nodes are blog posts.'),
+        '#default_value' => FALSE,
+      );
+      break;
+  }
+  return $form;
+}
+
+function theme_newblog_create_post_link($type, $name) {
+  return l($name, 'node/add/'. str_replace('_', '-', $type), array('html' => TRUE, 'query' => 'blog', 'attributes' => array('id' => 'newblog-'. $type)));
+}
