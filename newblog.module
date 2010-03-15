@@ -261,17 +261,6 @@ function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
 }
 
-function newblog_form_node_type_form_alter(&$form, &$form_state) {
-  if (isset($form['identity']['type'])) {
-    $form['workflow']['newblog'] = array(
-      '#type' => 'checkbox',
-      '#weight' => 10,
-      '#title' => t('Allowed to be in user blogs?'),
-      '#default_value' => variable_get('newblog_'. $form['#node_type']->type, FALSE),
-    );
-  }
-}
-
 /**
  * Implementation of hook_help().
  */
