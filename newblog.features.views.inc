@@ -85,9 +85,6 @@ function _newblog_views_default_views() {
       'id' => 'description',
       'table' => 'term_data',
       'field' => 'description',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
   ));
@@ -235,9 +232,6 @@ function _newblog_views_default_views() {
       'id' => 'tid',
       'table' => 'term_node',
       'field' => 'tid',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
     'title' => array(
@@ -247,9 +241,6 @@ function _newblog_views_default_views() {
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
     'name' => array(
@@ -259,9 +250,6 @@ function _newblog_views_default_views() {
       'id' => 'name',
       'table' => 'users',
       'field' => 'name',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
     'created' => array(
@@ -272,9 +260,6 @@ function _newblog_views_default_views() {
       'id' => 'created',
       'table' => 'node',
       'field' => 'created',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
   ));
@@ -502,9 +487,6 @@ function _newblog_views_default_views() {
       'id' => 'title',
       'table' => 'node',
       'field' => 'title',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'none',
     ),
   ));
@@ -742,9 +724,6 @@ function _newblog_views_default_views() {
       'validate_argument_user_flag_test' => 'flaggable',
       'validate_argument_user_flag_id_type' => 'id',
       'validate_argument_php' => '',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
   ));
   $handler->override_option('filters', array(
@@ -937,9 +916,6 @@ function _newblog_views_default_views() {
       'table' => 'users',
       'field' => 'uid',
       'relationship' => 'none',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
     'name' => array(
       'label' => '',
@@ -972,9 +948,6 @@ function _newblog_views_default_views() {
       'table' => 'users',
       'field' => 'name',
       'relationship' => 'none',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
   ));
   $handler->override_option('sorts', array(
@@ -1000,9 +973,6 @@ function _newblog_views_default_views() {
       'id' => 'status',
       'table' => 'node',
       'field' => 'status',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'nid',
     ),
     'created' => array(
@@ -1022,9 +992,6 @@ function _newblog_views_default_views() {
       'id' => 'created',
       'table' => 'node',
       'field' => 'created',
-      'override' => array(
-        'button' => 'Override',
-      ),
       'relationship' => 'nid',
     ),
     'nid' => array(
