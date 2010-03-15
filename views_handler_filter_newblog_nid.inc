@@ -12,9 +12,6 @@ class views_handler_filter_newblog_nid extends views_handler_filter_boolean_oper
 
   function query() {
     // Figure out what base table this relationship brings to the party.
-    $table_data = views_fetch_data($this->definition['base']);
-    $base_field = empty($this->definition['base field']) ? $table_data['table']['base']['field'] : $this->definition['base field'];
-
     $this->ensure_my_table();
 
     $def = $this->definition;
@@ -40,7 +37,7 @@ class views_handler_filter_newblog_nid extends views_handler_filter_boolean_oper
     // use a short alias for this:
     $alias = $def['table'] . '_' . $this->table;
 
-    $this->query->add_relationship($alias, $join, $this->definition['base'], $this->relationship);
+    $this->query->add_relationship($alias, $join, 'node', $this->relationship);
     $this->query->add_where($this->options['group'], $this->table_alias .'.'. $this->field .' '. (empty($this->value) ? 'IS NULL' : 'IS NOT NULL'));
   }
 }

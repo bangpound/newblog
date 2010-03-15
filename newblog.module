@@ -84,7 +84,7 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         $item = menu_get_item();
         switch ($item['path']) {
           case 'blog':
-            if ($item['page_arguments'][2]) {
+            if (!empty($item['page_arguments'][2])) {
               $uid = $item['page_arguments'][2];
             }
             else {
@@ -117,14 +117,16 @@ function newblog_block($op = 'list', $delta = 0, $edit = array()) {
         while ($tid = db_result($result)) {
           $terms[$tid] = taxonomy_get_term($tid);
         }
+        $items = array();
         foreach ($terms as $term) {
           $vocabulary = taxonomy_vocabulary_load($term->vid);
           $items[$vocabulary->name][] = l($term->name, 'blog/'. $uid .'/'. $term->tid);
         }
-        if (is_array($items)) {
+        if (!empty($items)) {
           $user = user_load($uid);
-          $name = $user->profile_blogtitle ? $user->profile_blogtitle : $user->name;
+          $name = isset($user->profile_blogtitle) ? $user->profile_blogtitle : $user->name;
           $block['subject'] = t('@name', array('@name' => $name));
+          $block['content'] = '';
           foreach ($items as $name => $group) {
             $block['content'] .= theme('item_list', $group, $name);
           }
@@ -205,6 +207,7 @@ function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       break;
 
     case 'alter':
+      $group_blog = FALSE;
       if ($node->blog && !$a3 && $a4) {
         if ($node->taxonomy) {
           foreach ($node->taxonomy as $term) {
