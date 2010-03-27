@@ -728,6 +728,7 @@ function _newblog_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'User blogs');
+  $handler->override_option('distinct', 0);
   $handler->override_option('style_plugin', 'list');
   $handler->override_option('style_options', array(
     'grouping' => '',
