@@ -17,16 +17,6 @@ function _newblog_views_default_views() {
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
-  $handler->override_option('relationships', array(
-    'parent' => array(
-      'label' => 'Parent',
-      'required' => 1,
-      'id' => 'parent',
-      'table' => 'term_hierarchy',
-      'field' => 'parent',
-      'relationship' => 'none',
-    ),
-  ));
   $handler->override_option('fields', array(
     'name' => array(
       'label' => '',
