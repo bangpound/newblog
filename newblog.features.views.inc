@@ -382,75 +382,6 @@ function _newblog_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('arguments', array(
-    'uid' => array(
-      'default_action' => 'ignore',
-      'style_plugin' => 'default_summary',
-      'style_options' => array(),
-      'wildcard' => 'all',
-      'wildcard_substitution' => 'All',
-      'title' => '%1\'s blog',
-      'default_argument_type' => 'fixed',
-      'default_argument' => '',
-      'validate_type' => 'php',
-      'validate_fail' => 'not found',
-      'break_phrase' => 0,
-      'not' => 0,
-      'id' => 'uid',
-      'table' => 'users',
-      'field' => 'uid',
-      'relationship' => 'none',
-      'default_options_div_prefix' => '',
-      'default_argument_user' => 0,
-      'default_argument_fixed' => '',
-      'default_argument_php' => '',
-      'validate_argument_node_type' => array(),
-      'validate_argument_node_access' => 0,
-      'validate_argument_nid_type' => 'nid',
-      'validate_argument_vocabulary' => array(),
-      'validate_argument_type' => 'tid',
-      'validate_argument_transform' => 0,
-      'validate_user_restrict_roles' => 0,
-      'validate_argument_php' => 'return ((($account = user_load($argument)) && user_access(\'maintain own blog\', $account)) ? TRUE : FALSE);',
-      'validate_user_argument_type' => 'uid',
-      'validate_user_roles' => array(),
-    ),
-    'tid' => array(
-      'default_action' => 'ignore',
-      'style_plugin' => 'default_summary',
-      'style_options' => array(),
-      'wildcard' => 'all',
-      'wildcard_substitution' => 'All',
-      'title' => '%2',
-      'default_argument_type' => 'fixed',
-      'default_argument' => '',
-      'validate_type' => 'taxonomy_term',
-      'validate_fail' => 'not found',
-      'break_phrase' => 1,
-      'add_table' => 0,
-      'require_value' => 0,
-      'reduce_duplicates' => 0,
-      'set_breadcrumb' => 0,
-      'id' => 'tid',
-      'table' => 'term_node',
-      'field' => 'tid',
-      'validate_user_argument_type' => 'uid',
-      'validate_user_roles' => array(),
-      'relationship' => 'none',
-      'default_options_div_prefix' => '',
-      'default_argument_user' => 0,
-      'default_argument_fixed' => '',
-      'default_argument_php' => '',
-      'validate_argument_node_type' => array(),
-      'validate_argument_node_access' => 0,
-      'validate_argument_nid_type' => 'nid',
-      'validate_argument_vocabulary' => array(),
-      'validate_argument_type' => 'tids',
-      'validate_argument_transform' => 0,
-      'validate_user_restrict_roles' => 0,
-      'validate_argument_php' => '',
-    ),
-  ));
   $handler->override_option('filters', array(
     'status' => array(
       'operator' => '=',
@@ -464,22 +395,6 @@ function _newblog_views_default_views() {
       'id' => 'status',
       'table' => 'node',
       'field' => 'status',
-      'relationship' => 'none',
-    ),
-    'uid' => array(
-      'operator' => 'not in',
-      'value' => array(
-        '0' => 0,
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'uid',
-      'table' => 'users',
-      'field' => 'uid',
       'relationship' => 'none',
     ),
     'nid' => array(
@@ -496,6 +411,23 @@ function _newblog_views_default_views() {
       'field' => 'nid',
       'relationship' => 'none',
     ),
+    'current' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'current',
+      'table' => 'spaces',
+      'field' => 'current',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'perm',
@@ -509,6 +441,25 @@ function _newblog_views_default_views() {
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_pager', '1');
   $handler->override_option('use_more', 1);
+  $handler->override_option('style_plugin', 'semanticviews_default');
+  $handler->override_option('style_options', array(
+    'group' => array(
+      'element_type' => 'h3',
+      'class' => 'title',
+    ),
+    'list' => array(
+      'element_type' => '',
+      'class' => '',
+    ),
+    'row' => array(
+      'element_type' => 'div',
+      'class' => 'node blog blog-#',
+      'last_every_nth' => '0',
+      'first_class' => 'first',
+      'last_class' => 'last',
+      'striping_classes' => 'odd even',
+    ),
+  ));
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
     'teaser' => 1,
@@ -516,21 +467,21 @@ function _newblog_views_default_views() {
     'comments' => 0,
   ));
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->override_option('empty', '<?php drupal_set_message(t(\'No blog entries have been created.\')); ?>');
-  $handler->override_option('empty_format', '3');
+  $handler->override_option('empty', 'No blog entries have been created.');
   $handler->override_option('path', 'blog');
   $handler->override_option('menu', array(
     'type' => 'normal',
     'title' => 'Blogs',
     'description' => '',
     'weight' => '0',
-    'name' => 'navigation',
+    'name' => 'features',
   ));
   $handler->override_option('tab_options', array(
     'type' => 'none',
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler = $view->new_display('feed', 'Feed', 'feed');
   $handler->override_option('style_plugin', 'rss');
@@ -542,7 +493,7 @@ function _newblog_views_default_views() {
   $handler->override_option('row_options', array(
     'item_length' => 'default',
   ));
-  $handler->override_option('path', 'blog/%/%/feed');
+  $handler->override_option('path', 'blog/feed');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',
@@ -555,6 +506,7 @@ function _newblog_views_default_views() {
     'title' => '',
     'description' => '',
     'weight' => 0,
+    'name' => 'navigation',
   ));
   $handler->override_option('displays', array(
     'page' => 'page',
@@ -565,7 +517,6 @@ function _newblog_views_default_views() {
   $handler = $view->new_display('block', 'Block', 'block');
   $handler->override_option('title', 'Recent blog posts');
   $handler->override_option('use_pager', '0');
-  $handler->override_option('style_plugin', 'semanticviews_default');
   $handler->override_option('style_options', array(
     'grouping' => '',
     'group' => array(
@@ -714,22 +665,6 @@ function _newblog_views_default_views() {
       'field' => 'nid',
       'relationship' => 'none',
     ),
-    'uid' => array(
-      'operator' => 'not in',
-      'value' => array(
-        '0' => 0,
-      ),
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'uid',
-      'table' => 'users',
-      'field' => 'uid',
-      'relationship' => 'none',
-    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -738,10 +673,25 @@ function _newblog_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'User blogs');
-  $handler->override_option('style_plugin', 'list');
+  $handler->override_option('style_plugin', 'semanticviews_default');
   $handler->override_option('style_options', array(
     'grouping' => '',
-    'type' => 'ul',
+    'group' => array(
+      'element_type' => 'h3',
+      'class' => 'title',
+    ),
+    'list' => array(
+      'element_type' => 'ul',
+      'class' => '',
+    ),
+    'row' => array(
+      'element_type' => 'li',
+      'class' => '',
+      'last_every_nth' => '0',
+      'first_class' => 'first',
+      'last_class' => 'last',
+      'striping_classes' => 'odd even',
+    ),
   ));
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('block_description', '');

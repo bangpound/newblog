@@ -47,3 +47,23 @@ $flags[] = array (
 );
 return $flags;
 }
+
+/**
+ * Helper to implementation of hook_menu_default_items().
+ */
+function _newblog_menu_default_items() {
+  $items = array();
+
+  $items[] = array(
+    'title' => 'Blogs',
+    'path' => 'blog',
+    'weight' => '0',
+  );
+  // Translatables
+  array(
+    t('Blogs'),
+  );
+
+
+  return $items;
+}

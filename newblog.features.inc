@@ -10,6 +10,15 @@ function newblog_flag_default_flags() {
 }
 
 /**
+ * Implementation of hook_menu_default_items().
+ */
+function newblog_menu_default_items() {
+  module_load_include('inc', 'newblog', 'newblog.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_newblog_menu_default_items', $args);
+}
+
+/**
  * Implementation of hook_views_default_views().
  */
 function newblog_views_default_views() {
