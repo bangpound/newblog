@@ -43,6 +43,11 @@ $flags[] = array (
   'show_on_form' => 1,
   'access_author' => 'own',
   'i18n' => '1',
+  'module' => 'newblog',
+  'locked' => 
+  array (
+    'name' => 'name',
+  ),
   'api_version' => 2,
 );
 return $flags;
