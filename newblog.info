@@ -12,7 +12,6 @@ description = "Enables keeping easily and regularly updated user web pages or bl
 features[flag][] = "newblog"
 features[menu][] = "blog"
 features[views][] = "blog_list"
-features[views][] = "group_blog"
 features[views][] = "newblog"
 features[views][] = "user_blogs"
 name = "New Blog"
