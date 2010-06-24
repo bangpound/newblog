@@ -259,18 +259,6 @@ function newblog_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       }
       break;
 
-    case 'view':
-      if ($a4 && menu_get_object() === $node && module_exists('context_ui')) {
-        context_set_by_condition('newblog_user', $node->blog);
-        foreach ($node->taxonomy as $term) {
-          if ($term->vid == variable_get('newblog_vocabulary', 0)) {
-            context_set_by_condition('newblog_group', '*');
-            context_set_by_condition('newblog_group', $term->tid);
-          }
-        }
-      }
-      break;
-
     default:
       break;
   }
@@ -319,40 +307,6 @@ function newblog_views_api() {
     'path' => drupal_get_path('module', 'newblog'),
     //'path' => drupal_get_path('module', 'newblog') . '/includes',
   );
-}
-
-function newblog_context_conditions() {
-  $items = array();
-
-  // Newblog user blog context
-  $items['newblog_user'] = array(
-    '#title' => t('User Blog'),
-    '#type' => 'radios',
-    '#options' => array(0 => t('False'), 1 => t('True')),
-    '#description' => t('The node is part of a user\'s blog'),
-  );
-
-  // Newblog group blog context
-  $tree = taxonomy_get_tree(variable_get('newblog_vocabulary', 0));
-  $options = array();
-  $exclude = array();
-
-  $options['*'] = t('Any');
-  if ($tree) {
-    foreach ($tree as $term) {
-      if (!in_array($term->tid, $exclude)) {
-        $options[$term->tid] = str_repeat('-', $term->depth) . $term->name;
-      }
-    }
-  }
-  $items['newblog_group'] = array(
-    '#title' => t('Group Blog'),
-    '#type' => 'checkboxes',
-    '#options' => $options,
-    '#description' => t('The node is part of a user\'s blog'),
-  );
-
-  return $items;
 }
 
 /**
