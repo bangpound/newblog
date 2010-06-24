@@ -1,6 +1,24 @@
 <?php
 
 /**
+ * Implementation of hook_context_default_contexts().
+ */
+function newblog_context_default_contexts() {
+  module_load_include('inc', 'newblog', 'newblog.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_newblog_context_default_contexts', $args);
+}
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function newblog_ctools_plugin_api() {
+  module_load_include('inc', 'newblog', 'newblog.defaults');
+  $args = func_get_args();
+  return call_user_func_array('_newblog_ctools_plugin_api', $args);
+}
+
+/**
  * Implementation of hook_flag_default_flags().
  */
 function newblog_flag_default_flags() {
