@@ -173,6 +173,21 @@ function _newblog_views_default_views() {
   $view->api_version = 2;
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+    'flag_content_rel' => array(
+      'label' => 'flag',
+      'required' => 1,
+      'flag' => 'newblog',
+      'user_scope' => 'any',
+      'id' => 'flag_content_rel',
+      'table' => 'node',
+      'field' => 'flag_content_rel',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('fields', array(
     'title' => array(
       'label' => '',
@@ -248,20 +263,6 @@ function _newblog_views_default_views() {
       'id' => 'status',
       'table' => 'node',
       'field' => 'status',
-      'relationship' => 'none',
-    ),
-    'nid' => array(
-      'operator' => '=',
-      'value' => '1',
-      'group' => '0',
-      'exposed' => FALSE,
-      'expose' => array(
-        'operator' => FALSE,
-        'label' => '',
-      ),
-      'id' => 'nid',
-      'table' => 'newblog',
-      'field' => 'nid',
       'relationship' => 'none',
     ),
     'current' => array(

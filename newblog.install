@@ -9,14 +9,6 @@
  * customized by user themes.
  */
 
-function newblog_install() {
-  drupal_install_schema('newblog');
-}
-
-function newblog_uninstall() {
-  drupal_uninstall_schema('newblog');
-}
-
 function newblog_enable() {
   if ($vocabulary = taxonomy_vocabulary_load(variable_get('newblog_vocabulary', 0))) {
     $vocabulary = (array) $vocabulary;
@@ -34,21 +26,4 @@ function newblog_enable() {
 
     variable_set('newblog_vocabulary', $vocabulary['vid']);
   }
-}
-
-function newblog_schema() {
-  $schema['newblog'] = array(
-    'description' => t('Nodes that are part of user blogs.'),
-    'fields' => array(
-      'nid' => array(
-        'description' => t('The primary identifier for a node.'),
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-    ),
-    'primary key' => array('nid'),
-  );
-
-  return $schema;
 }
