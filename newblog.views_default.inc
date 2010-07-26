@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Helper to implementation of hook_views_default_views().
+ * Implementation of hook_views_default_views().
  */
-function _newblog_views_default_views() {
+function newblog_views_default_views() {
   $views = array();
 
   // Exported view: blog_list
