@@ -299,17 +299,6 @@ function newblog_link($type, $node = NULL, $teaser = FALSE) {
 }
 
 /**
- * Implementation of hook_views_api().
- */
-function newblog_views_api() {
-  return array(
-    'api' => 2,
-    'path' => drupal_get_path('module', 'newblog'),
-    //'path' => drupal_get_path('module', 'newblog') . '/includes',
-  );
-}
-
-/**
  * Implementation of hook_feedapi_item().
  * Do nothing here, this function only makes us a feedapi processor,
  * which means that we can be enabled/disabled on a per node type
